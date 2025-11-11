@@ -8,70 +8,75 @@ from machine import Pin
 #   when turning, 5
 # kd = 0.01
 
-# 1. --- Setup ---
-# Instantiate your classes
-reader = LineReader(
-    pins = [Pin(5-x) for x in range(5)],
-    positions = [-10, -5, -2, 2, 5]
-) # Assuming default pins/positions
+class LineFollowerRobot:
+    def __init__(self, velocity, kp=0.35, kd=0.05):
+        self.reader = LineReader(
+            pins=[Pin(5 - x) for x in range(5)],
+            positions=[-10, -5, -2, 2, 5]
+        )
+        self.robot = Robot()
 
-robot = Robot() # you might have different constructor values
-Kp = 0.35       # tuning constant (porportional gain)
-Kd = 0.05       # derivative gain
+        # PD parameters
+        self.kp = kp
+        self.kd = kd
 
-# Set a base speed
-velocity = 30 
+        # Motion state
+        self.velocity = velocity
+        self.last_offset = 0.0
+        self.last_time_us = time.ticks_us() - 10000
 
-last_offset = 0.0
-last_time_us = time.ticks_us() - 10000 # Initialize in the past
+        self.running = False
 
-# 2. --- Control Loop ---
-try:
-    while True:
-        # --- PD Control Logic ---
-        reader.offset = 0
-        
-        # Calculate dt (time delta)
+    def _compute_dt(self):
         current_time_us = time.ticks_us()
-        dt_us = time.ticks_diff(current_time_us, last_time_us)
-        dt_s = dt_us / 1000000.0 # convert to seconds
-        last_time_us = current_time_us
+        dt_us = time.ticks_diff(current_time_us, self.last_time_us)
+        self.last_time_us = current_time_us
+        return dt_us / 1_000_000.0  # convert µs → seconds
 
-        # Get sensor reading
-        reader.update()
+    def _compute_control(self, error: float, dt: float):
+        derivative = 0.0
+        if dt > 0:
+            derivative = (error - self.last_offset) / dt
+        angular_velocity = (self.kp * error) + (self.kd * derivative)
+        self.last_offset = error
+        return angular_velocity
 
-        # P-term
-        error = reader.offset
-        
-        if abs(error) > 5:
-            velocity = 5
-        else:
-            velocity = 30
-        
-        # D-term
-        # Note: We must check dt_s to avoid ZeroDivisionError
-        # This also handles the first loop
-        derivative = 0
-        if dt_s > 0:
-            derivative = (error - last_offset) / dt_s
-        
-        # PD Calculation
-        angular_velocity = (Kp * error) + (Kd * derivative)
-        print(f"error TWO: {error}")
-        
-        # Save current error for next loop
-        last_offset = error
-        
-        # --- END CONTROL LOGIC ---
-        
-        # Send command to motors
-        robot.drive(velocity, angular_velocity)
+    def follow_line(self):
+        self.running = True
 
-               
-        # A small delay is not needed if your loop
-        # is fast, but 1ms can be okay. (try different values!)
-        time.sleep_ms(1)
+        try:
+            while self.running:
+                # Update sensor readings
+                self.reader.update()
+                error = self.reader.offset
 
-finally:
-    robot.stop()  # Always stop the motors
+                # Compute timing and PD control
+                dt = self._compute_dt()
+                angular_velocity = self._compute_control(error, dt)
 
+                # Adjust speed dynamically if turning sharply
+                if abs(error) > 5:
+                    current_velocity = min(self.velocity / 2, 10)
+                else:
+                    current_velocity = self.velocity
+
+                # Drive the robot
+                self.robot.drive(current_velocity, angular_velocity)
+
+                # Small delay to smooth loop timing
+                time.sleep_ms(1)
+
+        finally:
+            self.stop()
+
+    def stop(self):
+        """Stop the robot safely."""
+        self.running = False
+        self.robot.stop()
+
+
+# --- Example Usage ---
+if __name__ == "__main__":
+    # Safe defaults
+    bot = LineFollowerRobot(velocity=30)
+    bot.follow_line()
