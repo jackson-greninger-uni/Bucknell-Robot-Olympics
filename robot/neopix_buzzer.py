@@ -236,6 +236,7 @@ if __name__ == "__main__":
 
     duty_cycle = 0.5  # percentage
 
-    play_melody("pokemon")
+    while True:
+        normal_mode()
     
     
