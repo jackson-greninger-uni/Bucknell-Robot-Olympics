@@ -40,6 +40,18 @@ class LineFollowerRobot:
         angular_velocity = (self.kp * error) + (self.kd * derivative)
         self.last_offset = error
         return angular_velocity
+    
+    def compute_velocity(self, error):
+        x = abs(error)
+        v_max = self.velocity
+        v_min = 5       # You can tune this
+        x_max = 10      # Max offset expected
+
+        slope = (v_max - v_min) / x_max
+        v = v_max - slope * x
+
+        # Clamp so it doesn't go below v_min
+        return max(v, v_min)
 
     def follow_line(self):
         self.running = True
@@ -54,11 +66,7 @@ class LineFollowerRobot:
                 dt = self._compute_dt()
                 angular_velocity = self._compute_control(error, dt)
 
-                # Adjust speed dynamically if turning sharply
-                if abs(error) > 5:
-                    current_velocity = min(self.velocity / 2, 10)
-                else:
-                    current_velocity = self.velocity
+                current_velocity = self.compute_velocity(error)
 
                 # Drive the robot
                 self.robot.drive(current_velocity, angular_velocity)
@@ -78,5 +86,5 @@ class LineFollowerRobot:
 # --- Example Usage ---
 if __name__ == "__main__":
     # Safe defaults
-    bot = LineFollowerRobot(velocity=30)
+    bot = LineFollowerRobot(velocity=20, kp=0.35, kd=0.05)
     bot.follow_line()
