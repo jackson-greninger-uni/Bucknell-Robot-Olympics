@@ -37,14 +37,16 @@ class LineFollowerRobot:
         derivative = 0.0
         if dt > 0:
             derivative = (error - self.last_offset) / dt
+            
         angular_velocity = (self.kp * error) + (self.kd * derivative)
+
         self.last_offset = error
         return angular_velocity
     
     def compute_velocity(self, error):
         x = abs(error)
         v_max = self.velocity
-        v_min = 5       # You can tune this
+        v_min = 1       # You can tune this
         x_max = 10      # Max offset expected
 
         slope = (v_max - v_min) / x_max
@@ -81,10 +83,3 @@ class LineFollowerRobot:
         """Stop the robot safely."""
         self.running = False
         self.robot.stop()
-
-
-# --- Example Usage ---
-if __name__ == "__main__":
-    # Safe defaults
-    bot = LineFollowerRobot(velocity=20, kp=0.35, kd=0.05)
-    bot.follow_line()
