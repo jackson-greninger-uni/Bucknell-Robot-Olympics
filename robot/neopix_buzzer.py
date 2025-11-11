@@ -196,7 +196,7 @@ def play_melody(melody):
             pixels.write()
             time.sleep(duration)
 
-def normal_mode():
+def normal_mode(ultrasound, pixels, buzzer, duty_cycle):
     # measure the distance
     distance = ultrasound.measure()
 
@@ -236,6 +236,7 @@ if __name__ == "__main__":
 
     duty_cycle = 0.5  # percentage
 
-    play_melody("pokemon")
+    while True:
+        normal_mode(ultrasound, pixels, buzzer, duty_cycle)
     
     
