@@ -80,6 +80,5 @@ class LineFollowerRobot:
             self.stop()
 
     def stop(self):
-        """Stop the robot safely."""
         self.running = False
         self.robot.stop()
