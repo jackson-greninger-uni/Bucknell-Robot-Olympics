@@ -82,6 +82,10 @@ class Robot:
         
         #print(f"v_left={v_left:.3f}, v_right={v_right:.3f}, "
         #      f"duty_left={duty_left:.0f}, duty_right={duty_right:.0f}")
+    
+    def stop(self):
+        self.set_motor(self.M1A, self.M1B, 0, 0, self.left_bias)
+        self.set_motor(self.M2A, self.M2B, 0, 0, self.right_bias)
 
 
 if __name__ == "__main__":

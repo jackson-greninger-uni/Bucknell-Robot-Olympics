@@ -2,14 +2,14 @@ from machine import Pin
 import time
 
 def reflectance_sample(pins, samples, delay_us):
-    pulse_widths = [0, 0, 0, 0, 0, 0]
+    pulse_widths = [0, 0, 0, 0, 0]
 
     # charge capacitance
     pins[1].init(Pin.OUT, value=1)
     pins[2].init(Pin.OUT, value=1)
     pins[3].init(Pin.OUT, value=1)
     pins[4].init(Pin.OUT, value=1)
-    pins[5].init(Pin.OUT, value=1)
+    #pins[5].init(Pin.OUT, value=1)
     pins[0].init(Pin.OUT, value=1)
     time.sleep_us(30)
 
@@ -18,7 +18,7 @@ def reflectance_sample(pins, samples, delay_us):
     pins[2].init(Pin.IN, pull = None)
     pins[3].init(Pin.IN, pull = None)
     pins[4].init(Pin.IN, pull = None)
-    pins[5].init(Pin.IN, pull = None)
+    #pins[5].init(Pin.IN, pull = None)
     pins[0].init(Pin.IN, pull = None)
 
     for i in range(samples):
@@ -29,7 +29,7 @@ def reflectance_sample(pins, samples, delay_us):
         pulse_widths[2] += pins[2].value()
         pulse_widths[3] += pins[3].value()
         pulse_widths[4] += pins[4].value()
-        pulse_widths[5] += pins[5].value()
+        #pulse_widths[5] += pins[5].value()
         pulse_widths[0] += pins[0].value()
 
     for i in range(len(pulse_widths)):
@@ -41,8 +41,8 @@ def reflectance_sample(pins, samples, delay_us):
 
 if __name__=="__main__":    
     # list of input pins for light sensor
-    pins = [Pin(5-x) for x in range(6)]
-    positions = [-20, -12, -4, 4, 12, 20]
+    pins = [Pin(5-x) for x in range(5)]
+    positions = [-10, -5, -2, 2, 5]
 
     while True:
         ##########
@@ -77,4 +77,4 @@ if __name__=="__main__":
         for i in range(len(d)):
             position += d[i] * positions[i]
 
-        time.sleep(0.5)
+        print(f"position: {position}")
