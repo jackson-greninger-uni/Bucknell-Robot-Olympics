@@ -1,5 +1,7 @@
 import time
 from simple_reader import reflectance_sample
+from drive import Robot
+from machine import Pin
 
 class LineReader:
 
@@ -9,6 +11,8 @@ class LineReader:
         self.offset = 0.0
 
     def update(self):
+        self.offset = 0
+
         ##########
         # original sample run
         ##########
@@ -30,13 +34,20 @@ class LineReader:
         ##########
         for i in range(len(d)):
             if summation == 0:
-                d[i] == 0
+                d[i] = 0
             else:
                 d[i] /= summation
         ##########
         # calculate the position based on the positions array
         ##########
+        self.offset = 0
         for i in range(len(d)):
             self.offset += d[i] * self.positions[i]
 
-        time.sleep(0.5)
+if __name__ == "__main__":
+    while True:
+        reader = LineReader(
+            pins = [Pin(5-x) for x in range(5)],
+            positions = [-10, -5, -2, 2, 5]
+        )
+        reader.update()
