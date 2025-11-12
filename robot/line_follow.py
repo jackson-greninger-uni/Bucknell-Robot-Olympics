@@ -88,9 +88,9 @@ class LineFollowerRobot:
     def follow_line(self):
         
         # Check for obstacle first
-        if self.check_obstacle(threshold_cm=5):
-            self.robot.stop()
-            time.sleep(0.1)
+        #if self.check_obstacle(threshold_cm=5):
+        #    self.robot.stop()
+        #    time.sleep(0.1)
 
         # Update sensor readings
         self.reader.update()
