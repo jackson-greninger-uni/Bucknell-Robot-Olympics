@@ -86,7 +86,7 @@ class LineFollowerRobot:
         return distance < threshold_cm
 
     def follow_line(self):
-        
+
         # Check for obstacle first
         #if self.check_obstacle(threshold_cm=5):
         #    self.robot.stop()
@@ -107,7 +107,9 @@ class LineFollowerRobot:
 
         # Small delay to smooth loop timing
         time.sleep_ms(1)
+        
+    def go_straight(self, velocity):
+        self.robot.drive(velocity, 0)
 
     def stop(self):
-        self.running = False
         self.robot.stop()
