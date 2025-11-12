@@ -7,7 +7,7 @@ from line_follow import LineFollowerRobot
 import neopix_buzzer
 import uasyncio as asyncio
 
-async def line_task(robot):
+async def drive_task(robot):
     robot.follow_line()
     await asyncio.sleep(0.001)
 
@@ -25,6 +25,6 @@ async def distance_task():
 
 async def main():
     robot = LineFollowerRobot(velocity=30, kp=0.35, kd=0.01)
-    await asyncio.gather(line_task(robot), distance_task())
+    await asyncio.gather(drive_task(robot), distance_task())
 
 asyncio.run(main())
