@@ -16,3 +16,5 @@ while abs(sum(queue)) > 0.001:
     time.sleep_ms(1)
 
 line_robot.go_straight()
+time.sleep( <amount of time till we hit target> )
+line_robot.stop()
