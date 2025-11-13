@@ -104,9 +104,6 @@ class LineFollowerRobot:
         # Drive the robot
         self.robot.drive(current_velocity, angular_velocity)
 
-        # Small delay to smooth loop timing
-        time.sleep_ms(1)
-
     def go_straight(self, velocity):
         self.robot.drive(velocity, 0)
 
