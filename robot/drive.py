@@ -64,35 +64,18 @@ class Robot:
     
     def navigate_obstacle(self, threshold=15):
         
-        sleep_time = threshold / 10
+        # angular velocity needed for given radius
+        angular_v = 10 / threshold  # rad/s
 
-        # turn left
-        self.drive(10, math.radians(-90))
-        time.sleep(1)
+        # time needed to sweep 180 degrees
+        duration = math.pi / angular_v
 
-        # go straight
-        self.drive(10, 0)
-        time.sleep(sleep_time)
+        # Perform semicircle to the RIGHT (positive angular_v)
+        self.drive(10, angular_v)
+        time.sleep(duration)
 
-        # turn right
-        self.drive(10, math.radians(90))
-        time.sleep(1)
-
-        # go straight
-        self.drive(10, 0)
-        time.sleep(sleep_time * 2)
-
-        # turn right
-        self.drive(10, math.radians(90))
-        time.sleep(1)
-
-        # go straight
-        self.drive(10, 0)
-        time.sleep(sleep_time)
-
-        # turn left
-        self.drive(10, math.radians(-90))
-        time.sleep(1)
+        # Stop at end
+        self.drive(0, 0)
 
     def drive(self, linear_v, angular_v):
         # STOP
