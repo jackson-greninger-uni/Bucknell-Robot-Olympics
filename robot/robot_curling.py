@@ -17,9 +17,7 @@ sprint_robot = Robot()
 
 
 #robot on the line
-line_robot.follow_line()
-if line_robot.last_offset == 0.0:
-    line_robot.stop()
+
 
 sprint_robot.drive(40, 0)  # Move forward at 40 cm/s
 time.sleep(SPRINT_LEN / 40)  # Time to cover the sprint distance
