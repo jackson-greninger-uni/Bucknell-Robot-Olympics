@@ -88,8 +88,8 @@ class LineFollowerRobot:
     def follow_line(self):
 
         # Check for obstacle first
-        if self._detect_obstacle(threshold_cm=5):
-            self.robot.navigate_obstacle(5, 5)
+        if self._detect_obstacle(threshold_cm=15):
+            self.robot.navigate_obstacle(threshold=15)
 
         # Update sensor readings
         self.reader.update()

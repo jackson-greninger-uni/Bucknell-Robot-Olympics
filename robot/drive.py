@@ -62,20 +62,37 @@ class Robot:
 
         return v_left, v_right
     
-    def navigate_obstacle(self, radius=10, linear_v=10):
+    def navigate_obstacle(self, threshold=15):
         
-        # Semicircle angle = π radians (180°)
-        # Angular velocity = linear velocity / radius
-        angular_v = linear_v / radius  # rad/s
-        duration = math.pi * radius / linear_v  # time to complete semicircle
+        sleep_time = threshold / 10
 
-        start_time = time.ticks_ms()
+        # turn left
+        self.drive(10, math.radians(-90))
+        time.sleep(1)
 
-        while time.ticks_diff(time.ticks_ms(), start_time) < duration * 1000:
-            self.drive(linear_v, angular_v)
-            time.sleep_ms(10)
+        # go straight
+        self.drive(10, 0)
+        time.sleep(sleep_time)
 
-        self.drive(0, 0)
+        # turn right
+        self.drive(10, math.radians(90))
+        time.sleep(1)
+
+        # go straight
+        self.drive(10, 0)
+        time.sleep(sleep_time * 2)
+
+        # turn right
+        self.drive(10, math.radians(90))
+        time.sleep(1)
+
+        # go straight
+        self.drive(10, 0)
+        time.sleep(sleep_time)
+
+        # turn left
+        self.drive(10, math.radians(-90))
+        time.sleep(1)
 
     def drive(self, linear_v, angular_v):
         # STOP
