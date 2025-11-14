@@ -58,7 +58,7 @@ class LineFollowerRobot:
         # Clamp so it doesn't go below v_min
         return max(v, v_min)
     
-    def _detect_obstacles(self, threshold_cm=5):
+    def _detect_obstacle(self, threshold_cm=5):
         if self.ultrasound == None:
             return False
         
@@ -88,9 +88,8 @@ class LineFollowerRobot:
     def follow_line(self):
 
         # Check for obstacle first
-        #if self.check_obstacle(threshold_cm=5):
-        #    self.robot.stop()
-        #    time.sleep(0.1)
+        if self._detect_obstacle(threshold_cm=5):
+            self.robot.navigate_obstacle(5, 5)
 
         # Update sensor readings
         self.reader.update()
@@ -105,9 +104,6 @@ class LineFollowerRobot:
         # Drive the robot
         self.robot.drive(current_velocity, angular_velocity)
 
-        # Small delay to smooth loop timing
-        time.sleep_ms(1)
-        
     def go_straight(self, velocity):
         self.robot.drive(velocity, 0)
 
