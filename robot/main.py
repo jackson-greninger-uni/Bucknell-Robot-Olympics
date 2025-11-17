@@ -1,4 +1,4 @@
-from line_sensor import LineReader
+from util_line_sensor import LineReader
 import time
 from machine import Pin
 
