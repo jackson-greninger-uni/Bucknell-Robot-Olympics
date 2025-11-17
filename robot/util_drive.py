@@ -63,19 +63,21 @@ class Robot:
         return v_left, v_right
     
     def navigate_obstacle(self, threshold=15):
-        
-        # angular velocity needed for given radius
-        angular_v = 10 / threshold  # rad/s
+        # turn robot 90 degrees left
+        self.drive(0, math.radians(180))
+        time.sleep(0.5)
+        self.stop()
 
-        # time needed to sweep 180 degrees
-        duration = math.pi / angular_v
+        # drive the arc (turning right)
+        linear_v = (math.pi * threshold * 2) / 6    # distance (half a circle) over time
+        self.drive(linear_v, -math.radians(180))
+        time.sleep(3)
+        self.stop()
 
-        # Perform semicircle to the RIGHT (positive angular_v)
-        self.drive(10, angular_v)
-        time.sleep(duration)
-
-        # Stop at end
-        self.drive(0, 0)
+        # turn left again
+        self.drive(0, math.radians(180))
+        time.sleep(0.5)
+        self.stop()
 
     def drive(self, linear_v, angular_v):
         # STOP
