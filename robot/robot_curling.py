@@ -13,14 +13,18 @@ SPRINT_LEN = 0.75
 
 # Initialize the line-following robot with desired parameters
 line_robot = LineFollowerRobot(velocity=40, kp=0.35, kd=0.05)
-sprint_robot = Robot()
+
 
 
 #robot on the line
+while line_robot.last_offset != 0.00:
+    line_robot.follow_line()
+    print(f"Offset: {line_robot.last_offset:.2f}")
+    time.sleep(0.01)
 
 
-sprint_robot.drive(40, 0)  # Move forward at 40 cm/s
-time.sleep(SPRINT_LEN / 40)  # Time to cover the sprint distance
-sprint_robot.stop()
+line_robot.robot.stop()
+
+
     
     
