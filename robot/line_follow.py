@@ -85,11 +85,13 @@ class LineFollowerRobot:
 
         return distance < threshold_cm
 
-    def follow_line(self):
+    def follow_line(self, mode:str):
 
         # Check for obstacle first
-        if self._detect_obstacle(threshold_cm=15):
+        if self._detect_obstacle(threshold_cm=15) and mode == "navigate":
             self.robot.navigate_obstacle(threshold=15)
+        elif self._detect_obstacle(threshold_cm=15) and mode == "stop":
+            self.robot.stop()
 
         # Update sensor readings
         self.reader.update()
