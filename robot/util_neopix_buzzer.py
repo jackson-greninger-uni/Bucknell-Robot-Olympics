@@ -167,7 +167,7 @@ def get_note(note_name):
             return n
     return None
 
-def play_melody(melody):
+def play_melody(melody, pixels, buzzer, duty_cycle=0.5):
     for note_name, duration in melodies[melody]:
         note = get_note(note_name)
         if note:

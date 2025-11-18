@@ -1,6 +1,6 @@
 from util_drive import Robot
 import time
-from util_neopix_buzzer import normal_mode
+from util_neopix_buzzer import * 
 from machine import Pin
 import math
 from util_ultrasound import Ultrasound
@@ -46,7 +46,7 @@ ultrasound = Ultrasound(trigger = Pin(28, Pin.OUT), echo = Pin(7, Pin.IN))
 pixels = neopixel.NeoPixel(machine.Pin(18), 2)
 duty_cycle = 0.5  # percentage
 while True:
-    normal_mode(ultrasound, pixels, buzzer, duty_cycle)
+    play_melody("mario", pixels, buzzer, duty_cycle)
 
 
 
