@@ -92,6 +92,7 @@ class LineFollowerRobot:
             self.robot.navigate_obstacle(threshold=15)
         elif self._detect_obstacle(threshold_cm=15) and mode == "stop":
             self.robot.stop()
+            print("Trying to stop")
 
         # Update sensor readings
         self.reader.update()

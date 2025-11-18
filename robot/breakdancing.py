@@ -1,9 +1,9 @@
-from drive import Robot
+from util_drive import Robot
 import time
-from neopix_buzzer import normal_mode
+from util_neopix_buzzer import normal_mode
 from machine import Pin
 import math
-from ultrasound import Ultrasound
+from util_ultrasound import Ultrasound
 import neopixel
 
 #Breakdancing Qualifying

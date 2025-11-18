@@ -15,3 +15,4 @@ robot = LineFollowerRobot(velocity=10, kp=0.35, kd=0.025, ultrasound=ultrasound,
 while True:
     robot.follow_line("navigate")
     time.sleep_ms(1)
+    print("Working")

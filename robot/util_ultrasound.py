@@ -45,7 +45,7 @@ class Ultrasound():
 if __name__ == "__main__":
     speaker = machine.PWM(machine.Pin(15))
     
-    ultrasound = Ultrasound(trigger = Pin(5, Pin.OUT), echo = Pin(4, Pin.IN))
+    ultrasound = Ultrasound(trigger = Pin(28, Pin.OUT), echo = Pin(7, Pin.IN))
 
     duty_cycle = 1.0  # percentage
     
