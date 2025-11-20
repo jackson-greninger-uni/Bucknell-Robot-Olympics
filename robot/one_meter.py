@@ -10,7 +10,8 @@ pixels = neopixel.NeoPixel(machine.Pin(18), 2)
 ultrasound = Ultrasound(trigger = Pin(28, Pin.OUT), echo = Pin(7, Pin.IN))
 robot = LineFollowerRobot(velocity=10, kp=0.35, kd=0.025, ultrasound=ultrasound, buzzer=buzzer, pixels=pixels)
 
-while True:
+
+while ultrasound.measure() > 10:
     robot.follow_line("stop")
     time.sleep(0.1)
 
