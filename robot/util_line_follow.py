@@ -30,6 +30,11 @@ class LineFollowerRobot:
         self.buzzer = buzzer
         self.pixels = pixels
 
+        self.last_led_update = 0
+        self.last_ultra_time = 0
+
+        self.indicator = True
+
     def _compute_dt(self):
         current_time_us = time.ticks_us()
         dt_us = time.ticks_diff(current_time_us, self.last_time_us)
@@ -59,23 +64,34 @@ class LineFollowerRobot:
         return max(v, v_min)
     
     def _detect_obstacle(self, threshold_cm=5):
-        if self.ultrasound == None:
+        if self.ultrasound is None:
             return False
-        
+
+        # ensure at least 60ms between ultrasonic triggers
+        if time.ticks_diff(time.ticks_ms(), self.last_ultra_time) < 60:
+            return False
+
+        self.last_ultra_time = time.ticks_ms()
         distance = self.ultrasound.measure()
-        if distance == None:
+
+        if distance is None:
             return False
-        
-        # color variation depending on distance
+
+        # Update LEDs only every 100ms
         if self.pixels:
-            if distance < threshold_cm:
-                self.pixels.fill((255, 0, 0))   # Red = danger
-            elif distance < threshold_cm * 2:
-                self.pixels.fill((255, 255, 0)) # Yellow = caution
-            else:
-                self.pixels.fill((0, 255, 0))   # Green = safe
-            self.pixels.write()
-        
+            if time.ticks_diff(time.ticks_ms(), self.last_led_update) > 100:
+                self.last_led_update = time.ticks_ms()
+
+                if distance < threshold_cm:
+                    self.pixels.fill((255, 0, 0))
+                elif distance < threshold_cm * 2:
+                    self.pixels.fill((255, 255, 0))
+                else:
+                    self.pixels.fill((0, 255, 0))
+
+                self.pixels.write()   # now safe
+
+        # Buzzer logic
         if self.buzzer:
             if distance < threshold_cm:
                 self.buzzer.freq(440)
@@ -85,27 +101,30 @@ class LineFollowerRobot:
 
         return distance < threshold_cm
 
-    def follow_line(self, mode:str):
 
-        # Check for obstacle first
-        if self._detect_obstacle(threshold_cm=15) and mode == "navigate":
-            self.robot.navigate_obstacle(threshold=15)
-        elif self._detect_obstacle(threshold_cm=15) and mode == "stop":
-            self.robot.stop()
-            print("Trying to stop")
+    def follow_line(self, mode: str):
+        print("follow line")
 
-        # Update sensor readings
+        # Only check ultrasonic ONCE
+        obstacle = self._detect_obstacle(threshold_cm=15)
+
+        if obstacle:
+            if mode == "navigate":
+                self.robot.navigate_obstacle(threshold=15)
+            elif mode == "stop":
+                self.robot.stop()
+                self.indicator = False
+
+        # Update line sensors
         self.reader.update()
         error = self.reader.offset
 
-        # Compute timing and PD control
         dt = self._compute_dt()
         angular_velocity = self._compute_control(error, dt)
-
         current_velocity = self.compute_velocity(error)
 
-        # Drive the robot
         self.robot.drive(current_velocity, angular_velocity)
+
 
     def go_straight(self, velocity):
         self.robot.drive(velocity, 0)

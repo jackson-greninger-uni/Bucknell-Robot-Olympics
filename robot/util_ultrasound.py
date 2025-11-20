@@ -24,13 +24,14 @@ class Ultrasound():
         timeout = time.ticks_us()
         while self.e.value() == 0:
             if time.ticks_diff(time.ticks_us(), timeout) > 1000000:
+                print("echo:", self.e.value())
                 print("ERROR: no echo start")
                 return None
         start = time.ticks_us()
 
 	    # measure echo width
         while self.e.value() == 1:
-            if time.ticks_diff(time.ticks_us(), start) > 1000000:
+            if time.ticks_diff(time.ticks_us(), start) > 1002000:
                 print("ERROR: echo stuck high")
                 return None
         
