@@ -10,8 +10,24 @@ pixels = neopixel.NeoPixel(machine.Pin(18), 2)
 ultrasound = Ultrasound(trigger = Pin(28, Pin.OUT), echo = Pin(7, Pin.IN))
 robot = LineFollowerRobot(velocity=10, kp=0.35, kd=0.025, ultrasound=ultrasound, buzzer=buzzer, pixels=pixels)
 
+# Another idea, but don't know if the continue in loop will work
+#while True:
+#    distance = ultrasound.measure()
+#    if distance < 10:
+#        continue
+#    else:
+#        robot.follow_line("stop")
+#        time.sleep(0.5)
 
-while ultrasound.measure() > 10:
-    robot.follow_line("stop")
+# Wait until clear
+while True:
+    distance = ultrasound.measure()
+    if distance >= 10:
+        break
     time.sleep(0.1)
+# Follow line and should stop when sees a wall 
+while True:
+    robot.follow_line("stop")
+    time.sleep(0.5)
+
 
