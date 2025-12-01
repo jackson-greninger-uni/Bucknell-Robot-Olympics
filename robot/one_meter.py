@@ -9,7 +9,7 @@ import time
 buzzer = machine.PWM(machine.Pin(22))
 pixels = neopixel.NeoPixel(machine.Pin(18), 2)
 ultrasound = Ultrasound(trigger = Pin(28, Pin.OUT), echo = Pin(7, Pin.IN))
-robot = LineFollowerRobot(velocity=45, kp=0.20, kd=0.025, ultrasound=ultrasound, buzzer=buzzer, pixels=pixels)
+robot = LineFollowerRobot(velocity=60, kp=0.1, kd=0.1, ultrasound=ultrasound, buzzer=buzzer, pixels=pixels)
 
 # Another idea, but don't know if the continue in loop will work
 #while True:
