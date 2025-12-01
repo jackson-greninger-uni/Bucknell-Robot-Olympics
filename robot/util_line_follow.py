@@ -92,28 +92,27 @@ class LineFollowerRobot:
                 self.pixels.write()   # now safe
 
         # Buzzer logic
-        if self.buzzer:
-            if distance < threshold_cm:
-                self.buzzer.freq(440)
-                self.buzzer.duty_u16(30000)
-            else:
-                self.buzzer.duty_u16(0)
+        #if self.buzzer:
+        #    if distance < threshold_cm:
+        #        self.buzzer.freq(440)
+        #        self.buzzer.duty_u16(30000)
+        #    else:
+        #        self.buzzer.duty_u16(0)
 
         return distance < threshold_cm
 
 
-    def follow_line(self, mode: str):
-        print("follow line")
-
+    def follow_line(self, mode: str, threshold=20):
         # Only check ultrasonic ONCE
-        obstacle = self._detect_obstacle(threshold_cm=15)
+        obstacle = self._detect_obstacle(threshold)
 
         if obstacle:
             if mode == "navigate":
-                self.robot.navigate_obstacle(threshold=15)
+                self.robot.navigate_obstacle(threshold)
             elif mode == "stop":
                 self.robot.stop()
                 self.indicator = False
+                return
 
         # Update line sensors
         self.reader.update()

@@ -9,6 +9,7 @@ class LineReader:
         self.positions = positions
         self.pins = pins
         self.offset = 0.0
+        self.array = []
 
     def update(self):
         self.offset = 0
@@ -40,6 +41,7 @@ class LineReader:
         ##########
         # calculate the position based on the positions array
         ##########
+        self.array = d
         self.offset = 0
         for i in range(len(d)):
             self.offset += d[i] * self.positions[i]

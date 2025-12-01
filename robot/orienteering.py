@@ -10,8 +10,11 @@ ultrasound = Ultrasound(trigger = Pin(28, Pin.OUT), echo = Pin(7, Pin.IN))
 pixels = neopixel.NeoPixel(machine.Pin(18), 2)
 duty_cycle = 0.5  # percentage
 
-robot = LineFollowerRobot(velocity=10, kp=0.35, kd=0.025, ultrasound=ultrasound, buzzer=buzzer, pixels=pixels)
+line_robot = LineFollowerRobot(velocity=10, kp=0.35, kd=0.025, ultrasound=ultrasound, buzzer=buzzer, pixels=pixels)
 
-while True:
-    robot.follow_line("stop")
+while line_robot.indicator:
+    line_robot.follow_line("stop", 2)
+    print(line_robot.reader.array)
     time.sleep_ms(1)
+pixels.fill((0,255,0))
+pixels.write()
