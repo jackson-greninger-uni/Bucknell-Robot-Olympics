@@ -12,7 +12,7 @@ class LineFollowerRobot:
     def __init__(self, velocity, kp=0.35, kd=0.05, ultrasound=None, buzzer=None, pixels=None):
         self.reader = LineReader(
             pins=[Pin(5 - x) for x in range(5)],
-            positions=[-10, -5, -2, 2, 5]
+            positions=[-10, -5, -2, 4, 8]
         )
         self.robot = Robot()
 
@@ -46,7 +46,7 @@ class LineFollowerRobot:
         if dt > 0:
             derivative = (error - self.last_offset) / dt
             
-        angular_velocity = (self.kp * error) + (self.kd * derivative)
+        angular_velocity = (self.kp * error) + (self.kd * derivative) * 0.5
 
         self.last_offset = error
         return angular_velocity
