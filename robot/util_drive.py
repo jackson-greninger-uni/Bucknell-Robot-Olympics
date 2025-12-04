@@ -1,8 +1,9 @@
 # import neopix_buzzer
-import machine
+import machine import Pin
 import time
 import math
 from util_ultrasound import Ultrasound
+from util_line_sensor import LineReader
 # import neopixel
 
 global buzzer, pixels, duty_cycle, ultrasound
@@ -16,6 +17,12 @@ class Robot:
         # Motion parameters
         self.duty = 0
         self.wheel_base = wheel_base
+
+        # reflectance sampling
+        self.line_reader = LineReader(
+            pins=[Pin(5 - x) for x in range(5)],
+            positions=[-10, -5, -2, 4, 8]
+        )
 
         # PWM setup for motors
         self.M1A = machine.PWM(machine.Pin(8))
@@ -48,12 +55,8 @@ class Robot:
 
         # TURN IN PLACE
         elif linear_v == 0:
-            if angular_v < 0:
-                v_left = -angular_v * (self.wheel_base / 2)
-                v_right = angular_v * (self.wheel_base / 2)
-            else:
-                v_left = angular_v * (self.wheel_base / 2)
-                v_right = -angular_v * (self.wheel_base / 2)
+            v_left = angular_v * (self.wheel_base / 2)
+            v_right = -angular_v * (self.wheel_base / 2)
 
         # TURN WHILE MOVING
         else:
@@ -63,21 +66,36 @@ class Robot:
         return v_left, v_right
     
     def navigate_obstacle(self, threshold=15):
-        # turn robot 90 degrees left
-        self.drive(0, math.radians(180))
+        # turn 90 right
+        self.drive(0, math.radians(130))
         time.sleep(0.5)
-        self.stop()
 
-        # drive the arc (turning right)
-        linear_v = (math.pi * threshold * 2) / 6    # distance (half a circle) over time
-        self.drive(linear_v, -math.radians(180))
-        time.sleep(3)
-        self.stop()
+        # straight
+        self.drive(10, math.radians(0))
+        time.sleep(1.0)
 
-        # turn left again
-        self.drive(0, math.radians(180))
+        # turn 90 left
+        self.drive(0, -math.radians(130))
         time.sleep(0.5)
-        self.stop()
+
+        # straight (length of the obstacle)
+        self.drive(10, math.radians(0))
+        time.sleep(1.5)
+
+        # turn 90 left
+        self.drive(0, -math.radians(130))
+        time.sleep(0.5)
+
+        # straight until we hit the line
+        while self.line_reader.offset > 1:
+            # straight
+            self.drive(10, math.radians(0))
+            time.sleep_ms(10)
+
+        # turn 90 right
+        self.drive(0, math.radians(120))
+        time.sleep(0.5)
+
 
     def drive(self, linear_v, angular_v):
         # STOP
@@ -108,39 +126,4 @@ class Robot:
 if __name__ == "__main__":
     robot = Robot()
     
-    # TEST 1 -- straight!
-    # 20 cm/s, 0 rad/s 
-    robot.drive (20, 0)
-    time.sleep_ms(500)
-    # stop, robot should have gone 10 cm forward. Check! I got about 12 cm.
-    robot.drive (0, 0)
-    time.sleep_ms(500)
-
-    # TEST 2 -- reverse
-    # -20 cm/s, 0 rad/s 
-    robot.drive (-20, 0)
-    time.sleep_ms(500)
-    # stop, robot should have gone 10 cm in reverse. Drive the M1B and M2B pins!
-    robot.drive (0, 0)
-    time.sleep_ms(500)
-
-    # TEST 3 -- RIGHT
-    robot.drive (20, math.radians(180))
-    time.sleep_ms(500)
-    # stop, robot should have turned about 90 degrees clockwise
-    robot.drive (0, 0)
-    time.sleep_ms(500)
-
-    # TEST 4 -- LEFT
-    robot.drive (20, -math.radians(180))
-    time.sleep_ms(500)
-    # stop, we should have turned about 180 degrees counter clockwise
-    robot.drive (0, 0)
-    time.sleep_ms(500)
-
-    ## TEST 5 -- ROTATE in PLACE
-    robot.drive (0, math.radians(360))
-    time.sleep_ms(1000)
-    # stop, robot should turn about 360 degrees clockwise
-    robot.drive (0, 0)
-    time.sleep_ms(500)
+    robot.navigate_obstacle()
