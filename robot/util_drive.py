@@ -80,16 +80,17 @@ class Robot:
 
         # straight (length of the obstacle)
         self.drive(10, math.radians(0))
-        time.sleep(1.5)
+        time.sleep(1.0)
 
         # turn 90 left
         self.drive(0, -math.radians(130))
         time.sleep(0.5)
 
         # straight until we hit the line
-        while self.line_reader.offset > 1:
+        while True:
             # straight
             self.drive(10, math.radians(0))
+            print(self.line_reader.offset)
             time.sleep_ms(10)
 
         # turn 90 right

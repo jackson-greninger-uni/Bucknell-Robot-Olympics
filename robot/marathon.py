@@ -13,5 +13,5 @@ duty_cycle = 0.5  # percentage
 robot = LineFollowerRobot(velocity=15, kp=0.45, kd=0.01, ultrasound=ultrasound, buzzer=buzzer, pixels=pixels)
 
 while True:
-    robot.follow_line("navigate", 10)
+    robot.follow_line("navigate", 3)
     time.sleep(0.1)
