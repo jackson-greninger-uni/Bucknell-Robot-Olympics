@@ -8,7 +8,7 @@ import neopixel
 
 queue = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]     # init with all ones
 
-line_robot = LineFollowerRobot(20, kp=0.35, kd=0.01)
+line_robot = LineFollowerRobot(10, kp=0.35, kd=0.01)
 pixels = neopixel.NeoPixel(machine.Pin(18), 2)
 
 while abs(sum(queue)) > 0.001:
