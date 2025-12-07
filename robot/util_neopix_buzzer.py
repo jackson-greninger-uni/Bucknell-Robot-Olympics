@@ -188,6 +188,19 @@ melodies = {
         ("rest", 0.08),
         ("E4", 0.08),("E4", 0.08),("B3", 0.08),
         ("rest", 1.0),
+    ],
+
+    "victory_short": [
+        ("C4", 0.20),
+        ("E4", 0.20),
+        ("G4", 0.25),
+
+        ("C5", 0.20),
+        ("E5", 0.20),
+        ("C5", 0.30),
+
+        ("G4", 0.20),
+        ("C5", 0.45)
     ]
 }
 
@@ -244,6 +257,8 @@ def play_melody(melody, pixels, buzzer, duty_cycle=0.01):
             pixels.fill((0, 0, 0))
             pixels.write()
             time.sleep(duration)
+    buzzer.duty_u16(0)
+    buzzer.deinit()
 
 def normal_mode(ultrasound, pixels, buzzer, duty_cycle):
     # measure the distance
@@ -285,7 +300,6 @@ if __name__ == "__main__":
 
     duty_cycle = 0.5  # percentage
 
-    while True:
-        play_melody("sandstorm", pixels, buzzer)
+    play_melody("victory_short", pixels, buzzer)
     
     

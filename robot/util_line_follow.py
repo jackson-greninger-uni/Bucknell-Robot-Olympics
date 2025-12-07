@@ -1,6 +1,7 @@
 from util_line_sensor import LineReader
 from util_drive import Robot
 import time
+import machine
 from machine import Pin
 
 # safe values:
@@ -35,6 +36,8 @@ class LineFollowerRobot:
 
         self.indicator = True
 
+        self.obstacle_type = 1
+
     def _compute_dt(self):
         current_time_us = time.ticks_us()
         dt_us = time.ticks_diff(current_time_us, self.last_time_us)
@@ -63,7 +66,7 @@ class LineFollowerRobot:
         # Clamp so it doesn't go below v_min
         return max(v, v_min)
     
-    def _detect_obstacle(self, threshold_cm=5):
+    def _detect_obstacle(self, threshold_cm=7):
         if self.ultrasound is None:
             return False
 
@@ -103,27 +106,49 @@ class LineFollowerRobot:
 
 
     def follow_line(self, mode: str, threshold=20):
-        # Only check ultrasonic ONCE
         obstacle = self._detect_obstacle(threshold)
+        now = time.ticks_ms()
 
-        if obstacle:
+        if obstacle and not hasattr(self, "nav_cooldown"):
+            self.nav_cooldown = 0  # initialize if missing
+
+        if obstacle and time.ticks_diff(now, self.nav_cooldown) > 2000:  # 2 sec cooldown
+            # run navigation
             if mode == "navigate":
-                self.robot.navigate_obstacle(threshold)
+                self.robot.navigate_obstacle(self.obstacle_type, threshold)
+
+                # toggle ONLY after navigating
+                self.obstacle_type = 2 if self.obstacle_type == 1 else 1
+
+                self.nav_cooldown = time.ticks_ms()
+
+                # clear area
+                clear_start = time.ticks_ms()
+                while time.ticks_diff(time.ticks_ms(), clear_start) < 800:
+                    self.robot.drive(10, 0)
+                    time.sleep_ms(10)
+
+                return
+
             elif mode == "stop":
                 self.robot.stop()
                 self.indicator = False
                 return
 
-        # Update line sensors
+
+        # --- NORMAL LINE FOLLOWING
+
+        # update line sensors
         self.reader.update()
         error = self.reader.offset
 
+        # compute control
         dt = self._compute_dt()
         angular_velocity = self._compute_control(error, dt)
         current_velocity = self.compute_velocity(error)
 
+        # drive robot
         self.robot.drive(current_velocity, angular_velocity)
-
 
     def go_straight(self, velocity):
         self.robot.drive(velocity, 0)

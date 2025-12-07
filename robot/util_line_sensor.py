@@ -1,6 +1,5 @@
 import time
 from util_simple_reader import reflectance_sample
-from util_drive import Robot
 from machine import Pin
 
 class LineReader:
