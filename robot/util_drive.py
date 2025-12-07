@@ -1,5 +1,5 @@
-# import neopix_buzzer
-import machine import Pin
+import machine
+from machine import Pin
 import time
 import math
 from util_ultrasound import Ultrasound
@@ -65,38 +65,54 @@ class Robot:
 
         return v_left, v_right
     
-    def navigate_obstacle(self, threshold=15):
-        # turn 90 right
-        self.drive(0, math.radians(130))
-        time.sleep(0.5)
+    def navigate_obstacle(self, obstacle_type, threshold=15):
+        if obstacle_type == 1:
+            self.drive(-5, 0)
+            time.sleep(0.35)
 
-        # straight
-        self.drive(10, math.radians(0))
-        time.sleep(1.0)
+            self.drive(0, -math.radians(20))
+            time.sleep(1.2)
 
-        # turn 90 left
-        self.drive(0, -math.radians(130))
-        time.sleep(0.5)
+            self.drive(10, 0)
+            time.sleep(0.8)
 
-        # straight (length of the obstacle)
-        self.drive(10, math.radians(0))
-        time.sleep(1.0)
+            self.drive(0, math.radians(5))
+            time.sleep(0.5)
 
-        # turn 90 left
-        self.drive(0, -math.radians(130))
-        time.sleep(0.5)
+            self.drive(10,0)
+            time.sleep(1.0)
 
-        # straight until we hit the line
-        while True:
+            self.drive(0, -math.radians(20))
+            time.sleep(0.5)
+
+        elif obstacle_type == 2:
+            # turn 90 right
+            self.drive(0, math.radians(120))
+            time.sleep(0.5)
+
             # straight
             self.drive(10, math.radians(0))
-            print(self.line_reader.offset)
-            time.sleep_ms(10)
+            time.sleep(1.0)
 
-        # turn 90 right
-        self.drive(0, math.radians(120))
-        time.sleep(0.5)
+            # turn 90 left
+            self.drive(0, -math.radians(130))
+            time.sleep(0.4)
 
+            # straight (length of the obstacle)
+            self.drive(10, math.radians(0))
+            time.sleep(1.5)
+
+            # turn 90 left
+            self.drive(0, -math.radians(130))
+            time.sleep(0.5)
+
+            # straight
+            self.drive(10, math.radians(0))
+            time.sleep(1.0)
+
+            # turn 90 right
+            self.drive(0, math.radians(120))
+            time.sleep(0.5)
 
     def drive(self, linear_v, angular_v):
         # STOP
